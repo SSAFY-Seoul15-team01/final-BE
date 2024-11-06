@@ -1,17 +1,20 @@
 package com.ssafy.trip.member.domain;
 
+import com.ssafy.trip.common.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "members")
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,27 +24,14 @@ public class Member {
     @Column(unique = true)
     private String nickname;
 
-    @Column(name = "profile_url")
     private String profileUrl;
 
     @NonNull
-    @Column(name = "social_id")
     private String socialId;
 
     @NonNull
-    @Column(name = "social_type")
     private String socialType;
 
-    @NonNull
-    @CreatedDate
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
 }
