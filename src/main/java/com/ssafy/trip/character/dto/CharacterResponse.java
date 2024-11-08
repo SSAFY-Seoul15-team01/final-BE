@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 public class CharacterResponse {
     private Integer id;
-    private byte[] image;
+    private String imageUrl;
     private Integer level;
     private Integer exp;
     private Integer sidoId;
