@@ -1,4 +1,4 @@
-package com.ssafy.trip.character.domain;
+package com.ssafy.trip.areacharacter.domain;
 
 import com.ssafy.trip.member.domain.Member;
 import jakarta.persistence.*;
@@ -34,13 +34,13 @@ public class MemberCharacter {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "character_id")
-    private Character character;
+    private AreaCharacter areaCharacter;
 
     @Builder
-    public MemberCharacter(Integer level, Integer exp, Member member, Character character) {
+    public MemberCharacter(Integer level, Integer exp, Member member, AreaCharacter areaCharacter) {
         this.level = level;
         this.exp = exp;
         this.member = member;
-        this.character = character;
+        this.areaCharacter = areaCharacter;
     }
 }

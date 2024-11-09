@@ -1,6 +1,6 @@
-package com.ssafy.trip.character.dto;
+package com.ssafy.trip.areacharacter.dto;
 
-import com.ssafy.trip.character.domain.Character;
+import com.ssafy.trip.areacharacter.domain.AreaCharacter;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -9,5 +9,5 @@ import lombok.ToString;
 @Getter
 @Builder
 public class CreatedCharacterResponse {
-    Character character;
+    AreaCharacter areaCharacter;
 }

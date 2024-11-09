@@ -1,12 +1,12 @@
-package com.ssafy.trip.character.controller;
+package com.ssafy.trip.areacharacter.controller;
 
 import com.drew.imaging.ImageProcessingException;
-import com.ssafy.trip.character.domain.Character;
-import com.ssafy.trip.character.domain.MemberCharacter;
-import com.ssafy.trip.character.dto.CharacterListOfMemberResponse;
-import com.ssafy.trip.character.dto.CharacterResponse;
-import com.ssafy.trip.character.dto.CreatedCharacterResponse;
-import com.ssafy.trip.character.service.CharacterService;
+import com.ssafy.trip.areacharacter.domain.AreaCharacter;
+import com.ssafy.trip.areacharacter.domain.MemberCharacter;
+import com.ssafy.trip.areacharacter.dto.AreaCharacterListOfMemberResponse;
+import com.ssafy.trip.areacharacter.dto.AreaCharacterResponse;
+import com.ssafy.trip.areacharacter.dto.CreatedCharacterResponse;
+import com.ssafy.trip.areacharacter.service.AreaCharacterService;
 import com.ssafy.trip.common.exception.NotCertifiedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,28 +20,29 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/characters")
-public class CharacterController {
-    private final CharacterService characterService;
+@RequestMapping("/area-characters")
+public class AreaCharacterController {
+    private final AreaCharacterService areaCharacterService;
 
     @GetMapping("/members/{memberId}")
-    public ResponseEntity<CharacterListOfMemberResponse> findCharactersByMemberId(
+    public ResponseEntity<AreaCharacterListOfMemberResponse> findCharactersByMemberId(
             @PathVariable("memberId") Long memberId
     ) {
-        List<MemberCharacter> characters = characterService.findCharactersByMemberId(memberId);
-        List<CharacterResponse> characterDtoList = characters.stream()
-                .map(character -> CharacterResponse.builder()
-                        .id(character.getId())
-                        .level(character.getLevel())
-                        .exp(character.getExp())
-                        .sidoId(character.getCharacter().getSidoId().getNo())
-                        .imageUrl(character.getCharacter().getImageUrl())
+        List<MemberCharacter> areaCharacters = areaCharacterService.findCharactersByMemberId(memberId);
+
+        List<AreaCharacterResponse> areaCharacterDtoList = areaCharacters.stream()
+                .map(areaCharacter -> AreaCharacterResponse.builder()
+                        .id(areaCharacter.getId())
+                        .level(areaCharacter.getLevel())
+                        .exp(areaCharacter.getExp())
+                        .sidoId(areaCharacter.getAreaCharacter().getSidoId().getNo())
+                        .imageUrl(areaCharacter.getAreaCharacter().getImageUrl())
                         .build()
                 )
                 .collect(Collectors.toList());
 
-        CharacterListOfMemberResponse responseDto = CharacterListOfMemberResponse.builder()
-                .characters(characterDtoList)
+        AreaCharacterListOfMemberResponse responseDto = AreaCharacterListOfMemberResponse.builder()
+                .areaCharacters(areaCharacterDtoList)
                 .build();
 
         return ResponseEntity.ok(responseDto);
@@ -52,9 +53,9 @@ public class CharacterController {
             @PathVariable Integer attractionId, @RequestPart MultipartFile imageFile
     ) {
         try {
-            Character character = characterService.createCharacterOfMember(imageFile, attractionId);
+            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId);
             CreatedCharacterResponse characterResponse = CreatedCharacterResponse.builder()
-                    .character(character)
+                    .areaCharacter(areaCharacter)
                     .build();
 
             return ResponseEntity.status(HttpStatus.CREATED).body(characterResponse);

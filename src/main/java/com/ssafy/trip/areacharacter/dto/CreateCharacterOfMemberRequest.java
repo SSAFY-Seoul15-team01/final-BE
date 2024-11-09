@@ -1,4 +1,4 @@
-package com.ssafy.trip.character.dto;
+package com.ssafy.trip.areacharacter.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

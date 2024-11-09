@@ -1,4 +1,4 @@
-package com.ssafy.trip.character.service;
+package com.ssafy.trip.areacharacter.service;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -7,10 +7,10 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.repository.AttractionRepository;
-import com.ssafy.trip.character.domain.Character;
-import com.ssafy.trip.character.domain.MemberCharacter;
-import com.ssafy.trip.character.repository.CharacterRepository;
-import com.ssafy.trip.character.repository.MemberCharacterRepository;
+import com.ssafy.trip.areacharacter.domain.AreaCharacter;
+import com.ssafy.trip.areacharacter.domain.MemberCharacter;
+import com.ssafy.trip.areacharacter.repository.AreaCharacterRepository;
+import com.ssafy.trip.areacharacter.repository.MemberCharacterRepository;
 import com.ssafy.trip.common.exception.NotCertifiedException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
@@ -26,11 +26,11 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class CharacterServiceImpl implements CharacterService {
+public class AreaCharacterServiceImpl implements AreaCharacterService {
     private final MemberCharacterRepository memberCharacterRepository;
     private final AttractionRepository attractionRepository;
     private final MemberRepository memberRepository;
-    private final CharacterRepository characterRepository;
+    private final AreaCharacterRepository areaCharacterRepository;
 
     // 20 미터 오차 범위
     private static final BigDecimal LATITUDE_ERROR_RANGE = BigDecimal.valueOf(0.000179);
@@ -44,7 +44,7 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
-    public Character createCharacterOfMember(MultipartFile imageFile, Integer attractionId)
+    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId)
             throws IOException, ImageProcessingException, NotCertifiedException {
         GeoLocation geoLocation = getGeoLocation(imageFile);
         Attraction attraction = attractionRepository.findByNo(attractionId);
@@ -55,16 +55,16 @@ public class CharacterServiceImpl implements CharacterService {
 
         // TODO: 소셜로그인 기능 구현되면 사용자 아이디 수정
         Member member = memberRepository.findById(1);
-        Character character = characterRepository.findBySidoId(attraction.getAreaCode());
+        AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
 
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()
                 .level(DEFAULT_LEVEL)
                 .exp(DEFAULT_EXP)
                 .member(member)
-                .character(character)
+                .areaCharacter(areaCharacter)
                 .build());
 
-        return memberCharacter.getCharacter();
+        return memberCharacter.getAreaCharacter();
     }
 
     @Override
