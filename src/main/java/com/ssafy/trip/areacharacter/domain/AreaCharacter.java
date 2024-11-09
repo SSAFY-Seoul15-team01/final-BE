@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "area_characters")
 public class AreaCharacter {
     @Id
-    private Long id;
+    private Integer id;
 
     @NotNull
     private String imageUrl;
