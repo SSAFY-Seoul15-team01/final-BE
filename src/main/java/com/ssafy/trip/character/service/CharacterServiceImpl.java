@@ -35,6 +35,8 @@ public class CharacterServiceImpl implements CharacterService {
     // 20 미터 오차 범위
     private static final BigDecimal LATITUDE_ERROR_RANGE = BigDecimal.valueOf(0.000179);
     private static final BigDecimal LONGITUDE_ERROR_RANGE = BigDecimal.valueOf(0.000227);
+    private static final Integer DEFAULT_LEVEL = 1;
+    private static final Integer DEFAULT_EXP = 0;
 
     @Override
     public List<MemberCharacter> findCharactersByMemberId(Long memberId) {
@@ -55,10 +57,9 @@ public class CharacterServiceImpl implements CharacterService {
         Member member = memberRepository.findById(1);
         Character character = characterRepository.findBySidoId(attraction.getAreaCode());
 
-        // TODO: magic number 상수 관리
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()
-                .level(1)
-                .exp(0)
+                .level(DEFAULT_LEVEL)
+                .exp(DEFAULT_EXP)
                 .member(member)
                 .character(character)
                 .build());
@@ -85,7 +86,6 @@ public class CharacterServiceImpl implements CharacterService {
         BigDecimal attractionLatitude = attraction.getLatitude();
         BigDecimal attractionLongitude = attraction.getLongitude();
 
-        // TODO: magic number 상수 관리
         return userLatitude.compareTo(attractionLatitude.subtract(LATITUDE_ERROR_RANGE)) == 1
                 && userLatitude.compareTo(attractionLatitude.add(LATITUDE_ERROR_RANGE)) == -1
                 && userLongitude.compareTo(attractionLongitude.subtract(LONGITUDE_ERROR_RANGE)) == 1
