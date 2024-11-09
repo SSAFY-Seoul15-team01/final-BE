@@ -11,6 +11,7 @@ import com.ssafy.trip.character.domain.Character;
 import com.ssafy.trip.character.domain.MemberCharacter;
 import com.ssafy.trip.character.repository.CharacterRepository;
 import com.ssafy.trip.character.repository.MemberCharacterRepository;
+import com.ssafy.trip.common.exception.NotCertifiedException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,13 +43,12 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public Character createCharacterOfMember(MultipartFile imageFile, Integer attractionId)
-            throws IOException, ImageProcessingException {
+            throws IOException, ImageProcessingException, NotCertifiedException {
         GeoLocation geoLocation = getGeoLocation(imageFile);
         Attraction attraction = attractionRepository.findByNo(attractionId);
 
-        // TODO: exception custom
         if (!isExistNear(geoLocation, attraction)) {
-            throw new ImageProcessingException("User Location is not near the attraction");
+            throw new NotCertifiedException("User Location is not near the attraction");
         }
 
         // TODO: 소셜로그인 기능 구현되면 사용자 아이디 수정
@@ -67,12 +67,12 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
-    public GeoLocation getGeoLocation(MultipartFile imageFile) throws IOException, ImageProcessingException {
+    public GeoLocation getGeoLocation(MultipartFile imageFile) throws IOException, ImageProcessingException, NotCertifiedException {
         Metadata metadata = ImageMetadataReader.readMetadata(imageFile.getInputStream());
         GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
         if (gpsDirectory == null || gpsDirectory.getGeoLocation() == null) {
-            throw new ImageProcessingException("Geo location is null");
+            throw new NotCertifiedException("Geo location is null");
         }
 
         return gpsDirectory.getGeoLocation();
