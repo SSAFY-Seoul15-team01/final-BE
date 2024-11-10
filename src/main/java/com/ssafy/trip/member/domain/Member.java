@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@AllArgsConstructor
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
 
@@ -36,4 +34,12 @@ public class Member extends BaseTimeEntity {
 
     private LocalDateTime deletedAt;
 
+    @Builder
+    public Member(String nickname, String profileUrl, String socialId, String socialType, LocalDateTime deletedAt) {
+        this.nickname = nickname;
+        this.profileUrl = profileUrl;
+        this.socialId = socialId;
+        this.socialType = socialType;
+        this.deletedAt = deletedAt;
+    }
 }
