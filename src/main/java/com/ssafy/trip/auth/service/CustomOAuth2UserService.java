@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final MemberRepository memberRepository;
     private final HttpSession httpSession;
+    private static final String NICKNAME_PREFIX = "User_";
 
     @Transactional
     @Override
@@ -34,7 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (!memberRepository.existsBySocialId(socialId)) {
             member = Member.builder()
                     .socialId(socialId)
-                    .nickname("User_" + socialId)
+                    .nickname(NICKNAME_PREFIX + socialId)
                     .socialType(oauthClientName)
                     .build();
 
@@ -43,7 +45,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             member = memberRepository.findBySocialId(socialId);
         }
 
-        httpSession.setAttribute("userInfo", member.getNickname());
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("nickname", member.getNickname());
+        userInfo.put("id", member.getId());
+
+        httpSession.setAttribute("userInfo", userInfo);
 
         return new CustomOAuth2User(socialId);
     }
