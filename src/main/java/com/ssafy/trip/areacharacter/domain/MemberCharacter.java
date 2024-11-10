@@ -1,9 +1,10 @@
-package com.ssafy.trip.character.domain;
+package com.ssafy.trip.areacharacter.domain;
 
 import com.ssafy.trip.member.domain.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -33,5 +34,13 @@ public class MemberCharacter {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "character_id")
-    private Character character;
+    private AreaCharacter areaCharacter;
+
+    @Builder
+    public MemberCharacter(Integer level, Integer exp, Member member, AreaCharacter areaCharacter) {
+        this.level = level;
+        this.exp = exp;
+        this.member = member;
+        this.areaCharacter = areaCharacter;
+    }
 }

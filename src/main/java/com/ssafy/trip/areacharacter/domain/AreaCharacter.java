@@ -1,4 +1,4 @@
-package com.ssafy.trip.character.domain;
+package com.ssafy.trip.areacharacter.domain;
 
 import com.ssafy.trip.attraction.domain.Sido;
 import jakarta.persistence.*;
@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "characters")
-public class Character {
+@Table(name = "area_characters")
+public class AreaCharacter {
     @Id
-    private Long id;
+    private Integer id;
 
     @NotNull
     private String imageUrl;

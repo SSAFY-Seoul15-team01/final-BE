@@ -1,6 +1,6 @@
-package com.ssafy.trip.character.repository;
+package com.ssafy.trip.areacharacter.repository;
 
-import com.ssafy.trip.character.domain.MemberCharacter;
+import com.ssafy.trip.areacharacter.domain.MemberCharacter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
