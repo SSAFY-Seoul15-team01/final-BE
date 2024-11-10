@@ -8,9 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configurable
 @Configuration
@@ -23,18 +20,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .csrf(CsrfConfigurer::disable)
-//                .httpBasic(HttpBasicConfigurer::disable)
-//                .sessionManagement(sessionManagement -> sessionManagement
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
-//                .logout((logoutConfig) ->
-//                        logoutConfig.logoutSuccessUrl("/"))
+                .logout((logout) ->logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/auth")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"))
                 .oauth2Login((oauth2) -> oauth2
-//                        .loginPage("/auth/login")
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/auth/login"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/auth/redirect/*"))
                         .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService)));
@@ -42,15 +36,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    protected CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//        corsConfiguration.addAllowedOrigin("*");
-//        corsConfiguration.addAllowedMethod("*");
-//        corsConfiguration.addAllowedHeader("*");
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfiguration);
-//        return source;
-//    }
 }
