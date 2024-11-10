@@ -1,4 +1,4 @@
-package com.ssafy.trip.config;
+package com.ssafy.trip.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
