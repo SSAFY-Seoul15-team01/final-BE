@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.attraction.repository.AttractionMapper">
+    <select id="selectAttractionsByKeyword" resultType="com.ssafy.trip.attraction.domain.Attraction">
+        select no, title, first_image1, first_image2, latitude, longitude, addr1
+        from attractions
+        where (title like concat('%',#{keyword},'%')
+            or addr1 like concat('%',#{keyword},'%'))
+            and no > #{cursorId}
+    </select>
+</mapper>
