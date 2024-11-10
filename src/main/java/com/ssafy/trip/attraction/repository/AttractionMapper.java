@@ -7,5 +7,5 @@ import java.util.List;
 
 @Mapper
 public interface AttractionMapper {
-    List<Attraction> selectAttractionsByKeyword(String keyword, Integer cursorId);
+    List<Attraction> selectAttractionsByKeyword(String keyword, int cursorId);
 }

@@ -9,5 +9,6 @@
         where (title like concat('%',#{keyword},'%')
             or addr1 like concat('%',#{keyword},'%'))
             and no > #{cursorId}
+        limit 5
     </select>
 </mapper>
