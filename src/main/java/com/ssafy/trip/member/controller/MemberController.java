@@ -1,8 +1,10 @@
 package com.ssafy.trip.member.controller;
 
+import com.ssafy.trip.common.exception.MemberNotFoundException;
 import com.ssafy.trip.member.dto.MemberResponse;
 import com.ssafy.trip.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<MemberResponse> findById(@PathVariable("memberId") Long id) {
-        return memberService.findById(id);
+    public ResponseEntity<Object> findById(@PathVariable("memberId") Long id) {
+        try {
+            MemberResponse memberResponse = memberService.findById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
+        } catch (MemberNotFoundException e) {
+            return ResponseEntity.badRequest().body("No such user: " + e.getMessage());
+        }
     }
 }
