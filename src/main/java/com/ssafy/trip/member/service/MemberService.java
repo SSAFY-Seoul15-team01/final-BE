@@ -15,16 +15,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public MemberResponse findById(Long id) throws MemberNotFoundException {
+    public Member findById(Long id) throws MemberNotFoundException {
         Member member = memberRepository.findById(id).orElse(null);
         if(member == null || member.getDeletedAt() != null) {
             throw new MemberNotFoundException("The user ID " + id + " is invalid or the account no longer exists.");
         }
-        return MemberResponse.builder()
-                .id(member.getId())
-                .nickname(member.getNickname())
-                .profileUrl(member.getProfileUrl())
-                .build();
+        return member;
     }
 
 }

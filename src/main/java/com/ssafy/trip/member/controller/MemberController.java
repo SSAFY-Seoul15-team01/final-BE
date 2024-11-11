@@ -1,6 +1,7 @@
 package com.ssafy.trip.member.controller;
 
 import com.ssafy.trip.common.exception.MemberNotFoundException;
+import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.dto.MemberResponse;
 import com.ssafy.trip.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,12 @@ public class MemberController {
     @GetMapping("/{memberId}")
     public ResponseEntity<Object> findById(@PathVariable("memberId") Long id) {
         try {
-            MemberResponse memberResponse = memberService.findById(id);
+            Member member = memberService.findById(id);
+            MemberResponse memberResponse = MemberResponse.builder()
+                    .id(member.getId())
+                    .nickname(member.getNickname())
+                    .profileUrl(member.getProfileUrl())
+                    .build();
             return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
         } catch (MemberNotFoundException e) {
             return ResponseEntity.badRequest().body("No such user: " + e.getMessage());
