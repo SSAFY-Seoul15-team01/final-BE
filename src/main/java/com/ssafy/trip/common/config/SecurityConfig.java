@@ -19,7 +19,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // TODO: 프론트 개발 시 CSRF 함께 관리하여 CSRF 보호 활성화하기
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
