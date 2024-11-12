@@ -5,14 +5,15 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.lang.GeoLocation;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
-import com.ssafy.trip.attraction.domain.Attraction;
-import com.ssafy.trip.attraction.repository.AttractionRepository;
 import com.ssafy.trip.areacharacter.domain.AreaCharacter;
 import com.ssafy.trip.areacharacter.domain.MemberCharacter;
 import com.ssafy.trip.areacharacter.repository.AreaCharacterRepository;
 import com.ssafy.trip.areacharacter.repository.MemberCharacterRepository;
-import com.ssafy.trip.common.exception.custom.MemberNotFoundException;
+import com.ssafy.trip.attraction.domain.Attraction;
+import com.ssafy.trip.attraction.repository.AttractionRepository;
+import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.NotCertifiedException;
+import com.ssafy.trip.common.exception.custom.NotFoundException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
         }
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() ->
-                new MemberNotFoundException("The user ID " + memberId + " is invalid or the account no longer exists."));
+                new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
         AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
 
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()
