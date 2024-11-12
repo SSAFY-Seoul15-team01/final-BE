@@ -5,11 +5,11 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class NotCertifiedException extends RuntimeException {
+public class BadRequestException extends RuntimeException {
     private final HttpStatus status;
     private final String message;
 
-    public NotCertifiedException(ErrorCode errorCode) {
+    public BadRequestException(ErrorCode errorCode) {
         this.status = errorCode.getStatus();
         this.message = errorCode.getMessage();
     }

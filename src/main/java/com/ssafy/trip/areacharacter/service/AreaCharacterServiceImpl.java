@@ -12,6 +12,7 @@ import com.ssafy.trip.areacharacter.repository.MemberCharacterRepository;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.repository.AttractionRepository;
 import com.ssafy.trip.common.exception.ErrorCode;
+import com.ssafy.trip.common.exception.custom.BadRequestException;
 import com.ssafy.trip.common.exception.custom.NotCertifiedException;
 import com.ssafy.trip.common.exception.custom.NotFoundException;
 import com.ssafy.trip.member.domain.Member;
@@ -46,13 +47,12 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
     }
 
     @Override
-    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long memberId)
-            throws IOException, ImageProcessingException, NotCertifiedException {
+    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long memberId) {
         GeoLocation geoLocation = getGeoLocation(imageFile);
         Attraction attraction = attractionRepository.findByNo(attractionId);
 
         if (!isExistNear(geoLocation, attraction)) {
-            throw new NotCertifiedException("User Location is not near the attraction");
+            throw new NotCertifiedException(ErrorCode.FAR_FROM_ATTRACTION);
         }
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() ->
@@ -70,12 +70,20 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
     }
 
     @Override
-    public GeoLocation getGeoLocation(MultipartFile imageFile) throws IOException, ImageProcessingException, NotCertifiedException {
-        Metadata metadata = ImageMetadataReader.readMetadata(imageFile.getInputStream());
-        GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+    public GeoLocation getGeoLocation(MultipartFile imageFile) {
+        GpsDirectory gpsDirectory = null;
+
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(imageFile.getInputStream());
+            gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+        } catch (ImageProcessingException e) {
+            throw new BadRequestException(ErrorCode.IMAGE_PROCESSING_ERROR);
+        } catch (IOException e) {
+            throw new BadRequestException(ErrorCode.IMAGE_READ_ERROR);
+        }
 
         if (gpsDirectory == null || gpsDirectory.getGeoLocation() == null) {
-            throw new NotCertifiedException("Geo location is null");
+            throw new NotCertifiedException(ErrorCode.GEOLOCATION_IS_NULL);
         }
 
         return gpsDirectory.getGeoLocation();
