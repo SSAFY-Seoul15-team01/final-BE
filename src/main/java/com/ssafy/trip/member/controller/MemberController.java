@@ -18,17 +18,14 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<Object> findById(@PathVariable("memberId") Long id) {
-//        try {
-            Member member = memberService.findById(id);
-            MemberResponse memberResponse = MemberResponse.builder()
-                    .id(member.getId())
-                    .nickname(member.getNickname())
-                    .profileUrl(member.getProfileUrl())
-                    .build();
-            return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
-//        } catch (MemberNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user: " + e.getMessage());
-//        }
+    public ResponseEntity<MemberResponse> findById(@PathVariable("memberId") Long id) {
+        Member member = memberService.findById(id);
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .profileUrl(member.getProfileUrl())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
     }
 }
