@@ -16,11 +16,8 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member findById(Long id) throws MemberNotFoundException {
-        Member member = memberRepository.findById(id).orElse(null);
-        if(member == null || member.getDeletedAt() != null) {
-            throw new MemberNotFoundException("The user ID " + id + " is invalid or the account no longer exists.");
-        }
-        return member;
+        return memberRepository.findByIdAndDeletedAtIsNotNull(id).orElseThrow(() ->
+                new MemberNotFoundException("The user ID " + id + " is invalid or the account no longer exists."));
     }
 
 }
