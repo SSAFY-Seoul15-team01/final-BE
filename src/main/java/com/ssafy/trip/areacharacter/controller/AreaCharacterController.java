@@ -56,18 +56,12 @@ public class AreaCharacterController {
     ) {
         Map<String, Object> userInfo = (HashMap<String, Object>) session.getAttribute("userInfo");
         Long memberId = (Long) userInfo.get("id");
-        try {
-            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId, memberId);
-            CreatedCharacterResponse characterResponse = CreatedCharacterResponse.builder()
-                    .areaCharacter(areaCharacter)
-                    .build();
+        AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId, memberId);
+        CreatedCharacterResponse characterResponse = CreatedCharacterResponse.builder()
+                .areaCharacter(areaCharacter)
+                .build();
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(characterResponse);
-        } catch (ImageProcessingException e) {
-            return ResponseEntity.badRequest().body("Failed to process image metadata: " + e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Failed to read image file: " + e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(characterResponse);
     }
 
 }
