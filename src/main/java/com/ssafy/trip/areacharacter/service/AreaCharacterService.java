@@ -5,7 +5,7 @@ import com.drew.lang.GeoLocation;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.areacharacter.domain.AreaCharacter;
 import com.ssafy.trip.areacharacter.domain.MemberCharacter;
-import com.ssafy.trip.common.exception.NotCertifiedException;
+import com.ssafy.trip.common.exception.custom.NotCertifiedException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

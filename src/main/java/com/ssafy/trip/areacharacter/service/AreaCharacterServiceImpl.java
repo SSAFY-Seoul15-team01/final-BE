@@ -11,8 +11,8 @@ import com.ssafy.trip.areacharacter.domain.AreaCharacter;
 import com.ssafy.trip.areacharacter.domain.MemberCharacter;
 import com.ssafy.trip.areacharacter.repository.AreaCharacterRepository;
 import com.ssafy.trip.areacharacter.repository.MemberCharacterRepository;
-import com.ssafy.trip.common.exception.MemberNotFoundException;
-import com.ssafy.trip.common.exception.NotCertifiedException;
+import com.ssafy.trip.common.exception.custom.MemberNotFoundException;
+import com.ssafy.trip.common.exception.custom.NotCertifiedException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
             throw new NotCertifiedException("User Location is not near the attraction");
         }
 
-        Member member = memberRepository.findByIdAndDeletedAtIsNotNull(memberId).orElseThrow(() ->
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() ->
                 new MemberNotFoundException("The user ID " + memberId + " is invalid or the account no longer exists."));
         AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
 
