@@ -52,7 +52,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
         Attraction attraction = attractionRepository.findByNo(attractionId);
 
         if (!isExistNear(geoLocation, attraction)) {
-            throw new NotCertifiedException("User Location is not near the attraction");
+            throw new NotCertifiedException(ErrorCode.FAR_FROM_ATTRACTION);
         }
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() ->
@@ -75,7 +75,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
         GpsDirectory gpsDirectory = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
         if (gpsDirectory == null || gpsDirectory.getGeoLocation() == null) {
-            throw new NotCertifiedException("Geo location is null");
+            throw new NotCertifiedException(ErrorCode.GEOLOCATION_IS_NULL);
         }
 
         return gpsDirectory.getGeoLocation();

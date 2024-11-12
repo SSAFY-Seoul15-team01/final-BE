@@ -7,7 +7,6 @@ import com.ssafy.trip.areacharacter.dto.AreaCharacterListOfMemberResponse;
 import com.ssafy.trip.areacharacter.dto.AreaCharacterResponse;
 import com.ssafy.trip.areacharacter.dto.CreatedCharacterResponse;
 import com.ssafy.trip.areacharacter.service.AreaCharacterService;
-import com.ssafy.trip.common.exception.custom.NotCertifiedException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -68,8 +67,6 @@ public class AreaCharacterController {
             return ResponseEntity.badRequest().body("Failed to process image metadata: " + e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.badRequest().body("Failed to read image file: " + e.getMessage());
-        } catch (NotCertifiedException e) {
-            return ResponseEntity.badRequest().body("Failed to certify travel: " + e.getMessage());
         }
     }
 
