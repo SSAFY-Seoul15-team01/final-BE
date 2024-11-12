@@ -45,7 +45,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
     }
 
     @Override
-    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long id)
+    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long memberId)
             throws IOException, ImageProcessingException, NotCertifiedException {
         GeoLocation geoLocation = getGeoLocation(imageFile);
         Attraction attraction = attractionRepository.findByNo(attractionId);
@@ -54,8 +54,8 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
             throw new NotCertifiedException("User Location is not near the attraction");
         }
 
-        Member member = memberRepository.findByIdAndDeletedAtIsNotNull(id).orElseThrow(() ->
-                new MemberNotFoundException("The user ID " + id + " is invalid or the account no longer exists."));
+        Member member = memberRepository.findByIdAndDeletedAtIsNotNull(memberId).orElseThrow(() ->
+                new MemberNotFoundException("The user ID " + memberId + " is invalid or the account no longer exists."));
         AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
 
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()

@@ -57,9 +57,9 @@ public class AreaCharacterController {
             @PathVariable Integer attractionId, @RequestPart MultipartFile imageFile, HttpSession session
     ) {
         Map<String, Object> userInfo = (HashMap<String, Object>) session.getAttribute("userInfo");
-        Long id = (Long) userInfo.get("id");
+        Long memberId = (Long) userInfo.get("id");
         try {
-            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId, id);
+            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId, memberId);
             CreatedCharacterResponse characterResponse = CreatedCharacterResponse.builder()
                     .areaCharacter(areaCharacter)
                     .build();
