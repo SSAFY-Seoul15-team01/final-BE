@@ -14,7 +14,7 @@ import java.util.List;
 public interface AreaCharacterService {
     List<MemberCharacter> findCharactersByMemberId(Long memberId);
 
-    AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId) throws IOException, ImageProcessingException, NotCertifiedException;
+    AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long id) throws IOException, ImageProcessingException, NotCertifiedException;
 
     GeoLocation getGeoLocation(MultipartFile imageFile) throws IOException, ImageProcessingException, NotCertifiedException;
 

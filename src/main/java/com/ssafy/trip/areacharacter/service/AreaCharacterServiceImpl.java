@@ -11,6 +11,7 @@ import com.ssafy.trip.areacharacter.domain.AreaCharacter;
 import com.ssafy.trip.areacharacter.domain.MemberCharacter;
 import com.ssafy.trip.areacharacter.repository.AreaCharacterRepository;
 import com.ssafy.trip.areacharacter.repository.MemberCharacterRepository;
+import com.ssafy.trip.common.exception.MemberNotFoundException;
 import com.ssafy.trip.common.exception.NotCertifiedException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
@@ -44,7 +45,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
     }
 
     @Override
-    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId)
+    public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long id)
             throws IOException, ImageProcessingException, NotCertifiedException {
         GeoLocation geoLocation = getGeoLocation(imageFile);
         Attraction attraction = attractionRepository.findByNo(attractionId);
@@ -53,8 +54,8 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
             throw new NotCertifiedException("User Location is not near the attraction");
         }
 
-        // TODO: 소셜로그인 기능 구현되면 사용자 아이디 수정
-        Member member = memberRepository.findById(1);
+        Member member = memberRepository.findByIdAndDeletedAtIsNotNull(id).orElseThrow(() ->
+                new MemberNotFoundException("The user ID " + id + " is invalid or the account no longer exists."));
         AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
 
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()

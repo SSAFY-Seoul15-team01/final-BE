@@ -7,7 +7,9 @@ import com.ssafy.trip.areacharacter.dto.AreaCharacterListOfMemberResponse;
 import com.ssafy.trip.areacharacter.dto.AreaCharacterResponse;
 import com.ssafy.trip.areacharacter.dto.CreatedCharacterResponse;
 import com.ssafy.trip.areacharacter.service.AreaCharacterService;
+import com.ssafy.trip.common.exception.MemberNotFoundException;
 import com.ssafy.trip.common.exception.NotCertifiedException;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,10 +54,12 @@ public class AreaCharacterController {
 
     @PostMapping("/attractions/{attractionId}")
     public ResponseEntity<?> createCharacterOfMember(
-            @PathVariable Integer attractionId, @RequestPart MultipartFile imageFile
+            @PathVariable Integer attractionId, @RequestPart MultipartFile imageFile, HttpSession session
     ) {
+        Map<String, Object> userInfo = (HashMap<String, Object>) session.getAttribute("userInfo");
+        Long id = (Long) userInfo.get("id");
         try {
-            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId);
+            AreaCharacter areaCharacter = areaCharacterService.createCharacterOfMember(imageFile, attractionId, id);
             CreatedCharacterResponse characterResponse = CreatedCharacterResponse.builder()
                     .areaCharacter(areaCharacter)
                     .build();
@@ -65,6 +71,8 @@ public class AreaCharacterController {
             return ResponseEntity.badRequest().body("Failed to read image file: " + e.getMessage());
         } catch (NotCertifiedException e) {
             return ResponseEntity.badRequest().body("Failed to certify travel: " + e.getMessage());
+        } catch (MemberNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user: " + e.getMessage());
         }
     }
 

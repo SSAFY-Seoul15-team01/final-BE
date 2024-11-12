@@ -26,7 +26,7 @@ public class MemberController {
                     .build();
             return ResponseEntity.status(HttpStatus.OK).body(memberResponse);
         } catch (MemberNotFoundException e) {
-            return ResponseEntity.badRequest().body("No such user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No such user: " + e.getMessage());
         }
     }
 }
