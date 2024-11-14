@@ -3,6 +3,7 @@ package com.ssafy.trip.common.exception;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
 import com.ssafy.trip.common.exception.custom.NotCertifiedException;
 import com.ssafy.trip.common.exception.custom.NotFoundException;
+import com.ssafy.trip.common.exception.custom.S3Exception;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotCertifiedException.class)
     public ResponseEntity<ErrorResponse> notCertifiedException(NotCertifiedException e) {
+        ErrorResponse response = new ErrorResponse(e.getStatus(), e.getMessage());
+        return ResponseEntity.status(e.getStatus()).body(response);
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ErrorResponse> s3Exception(S3Exception e) {
         ErrorResponse response = new ErrorResponse(e.getStatus(), e.getMessage());
         return ResponseEntity.status(e.getStatus()).body(response);
     }

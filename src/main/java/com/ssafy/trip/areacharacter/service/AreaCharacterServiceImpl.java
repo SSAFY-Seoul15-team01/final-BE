@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -49,7 +50,9 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
     @Override
     public AreaCharacter createCharacterOfMember(MultipartFile imageFile, Integer attractionId, Long memberId) {
         GeoLocation geoLocation = getGeoLocation(imageFile);
-        Attraction attraction = attractionRepository.findByNo(attractionId);
+        Attraction attraction = attractionRepository.findByNo(attractionId).orElseThrow(() ->
+                    new BadRequestException(ErrorCode.ATTRACTION_NOT_FOUND)
+                );
 
         if (!isExistNear(geoLocation, attraction)) {
             throw new NotCertifiedException(ErrorCode.FAR_FROM_ATTRACTION);
