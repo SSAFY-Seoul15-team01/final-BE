@@ -10,6 +10,7 @@ public enum ErrorCode {
     IMAGE_PROCESSING_ERROR(HttpStatus.BAD_REQUEST, "Failed to process image metadata"),
     IMAGE_READ_ERROR(HttpStatus.BAD_REQUEST, "Failed to read image file"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "Failed to upload image file"),
+    IMAGE_ORIGINALNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "Image original name is not exist"),
 
     FAR_FROM_ATTRACTION(HttpStatus.BAD_REQUEST, "User Location is not near the attraction"),
     GEOLOCATION_IS_NULL(HttpStatus.BAD_REQUEST, "Geo location is null"),
