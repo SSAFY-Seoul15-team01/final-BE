@@ -11,6 +11,7 @@ public enum ErrorCode {
     IMAGE_READ_ERROR(HttpStatus.BAD_REQUEST, "Failed to read image file"),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST, "Failed to upload image file"),
     IMAGE_ORIGINALNAME_NOT_EXIST(HttpStatus.BAD_REQUEST, "Image original name is not exist"),
+    IMAGE_CONVERT_ERROR(HttpStatus.BAD_REQUEST, "Failed to convert image file from multipart file"),
 
     FAR_FROM_ATTRACTION(HttpStatus.BAD_REQUEST, "User Location is not near the attraction"),
     GEOLOCATION_IS_NULL(HttpStatus.BAD_REQUEST, "Geo location is null"),

@@ -29,9 +29,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -50,14 +52,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Long createArticle(String content, Long memberId, Integer attractionId, List<MultipartFile> images) {
-        Member member = memberRepository.findById(memberId).orElse(null);
-        Attraction attraction = attractionRepository.findById(attractionId).orElse(null);
-
-        if (member == null) {
-            throw new NotFoundException(ErrorCode.MEMBER_NOT_FOUND);
-        } else if (attraction == null) {
-            throw new NotFoundException(ErrorCode.ATTRACTION_NOT_FOUND);
-        }
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                    new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+                );
+        Attraction attraction = attractionRepository.findByNo(attractionId).orElseThrow(() ->
+                    new BadRequestException(ErrorCode.ATTRACTION_NOT_FOUND)
+                );
 
         Article article = articleRepository.save(
                 Article.builder()
@@ -70,7 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<String> urlList = new ArrayList<>();
 
         for (MultipartFile image : images) {
-            urlList.add(uploadImage(member, image));
+            urlList.add(uploadImage(member.getNickname(), image));
         }
 
         List<ArticleImage> articleImageList = new ArrayList<>();
@@ -89,28 +89,39 @@ public class ArticleServiceImpl implements ArticleService {
         return article.getId();
     }
 
-    @Override
-    public String uploadImage(Member member, MultipartFile imageFile) {
-        String originalFilename = imageFile.getOriginalFilename();
-
-        if (originalFilename == null) {
-            throw new BadRequestException(ErrorCode.IMAGE_ORIGINALNAME_NOT_EXIST);
-        }
-
-        return uploadImage(member, new File(originalFilename));
+    private String uploadImage(String nickname, MultipartFile imageFile) {
+        File uploadedFile = convert(imageFile);
+        return uploadImage(nickname, uploadedFile);
     }
 
-    @Override
-    public String uploadImage(Member member, File imageFile) {
-        String fileName = member.getNickname() + "/"
-                + UUID.randomUUID().toString().substring(0, 10) + imageFile.getName();
+    private String uploadImage(String nickname, File imageFile) {
+        String fileName = nickname + "/" + imageFile.getName();
 
         s3Client.putObject(
                 new PutObjectRequest(bucketName, fileName, imageFile)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
 
+        imageFile.delete();
+
         return s3Client.getUrl(bucketName, fileName).toString();
     }
 
+    private File convert(MultipartFile imageFile) {
+        String filename = UUID.randomUUID().toString().substring(0, 10)
+                + "_" + imageFile.getOriginalFilename();
+        File convertFile = new File(filename);
 
+        try {
+            if (!convertFile.exists()) {
+                convertFile.createNewFile();
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
+                fos.write(imageFile.getBytes());
+            }
+        } catch (IOException e) {
+            throw new BadRequestException(ErrorCode.IMAGE_READ_ERROR);
+        }
+        return convertFile;
+    }
 }
