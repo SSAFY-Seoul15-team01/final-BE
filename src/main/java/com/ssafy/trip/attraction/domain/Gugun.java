@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "guguns", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "guguns_sido_to_sidos_cdoe_fk",
-                columnNames = "gugun_code"
-        )
-})
-
+@Table(name = "guguns",
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"sido_code", "gugun_code"}
+        ))
 public class Gugun {
     @Id
     private Integer no;
+
+    @Column(name = "sido_code", insertable = false, updatable = false)
+    private Integer sidoCode;
 
     @NotNull
     private Integer gugunCode;
@@ -29,6 +29,6 @@ public class Gugun {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "sido_code")
-    private Sido sidoCode;
+    @JoinColumn(name = "sido_code", referencedColumnName = "sidoCode")
+    private Sido sido;
 }
