@@ -57,17 +57,15 @@ public class Attraction {
     private String overview;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "content_type_id")
     private ContentType contentTypeId;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "area_code", referencedColumnName = "sidoCode")
-    private Sido areaCode;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "si_gun_gu_code", referencedColumnName = "gugunCode")
-    private Gugun siGunGuCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name = "si_gun_gu_code", referencedColumnName = "gugunCode"),
+            @JoinColumn(name = "area_code", referencedColumnName = "sido_code")
+    })
+    private Gugun gugun;
 }

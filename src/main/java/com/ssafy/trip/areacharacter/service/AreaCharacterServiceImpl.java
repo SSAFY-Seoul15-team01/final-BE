@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -60,7 +59,7 @@ public class AreaCharacterServiceImpl implements AreaCharacterService {
 
         Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId).orElseThrow(() ->
                 new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
-        AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getAreaCode());
+        AreaCharacter areaCharacter = areaCharacterRepository.findBySidoId(attraction.getGugun().getSido());
 
         MemberCharacter memberCharacter = memberCharacterRepository.save(MemberCharacter.builder()
                 .level(DEFAULT_LEVEL)
