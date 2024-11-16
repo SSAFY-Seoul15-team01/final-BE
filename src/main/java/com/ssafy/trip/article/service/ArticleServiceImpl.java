@@ -1,39 +1,32 @@
 package com.ssafy.trip.article.service;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.util.IOUtils;
 import com.ssafy.trip.article.domain.Article;
 import com.ssafy.trip.article.domain.ArticleImage;
+import com.ssafy.trip.article.dto.ArticleResponse;
 import com.ssafy.trip.article.repository.ArticleImageRepository;
 import com.ssafy.trip.article.repository.ArticleRepository;
+import com.ssafy.trip.article.util.Pagination;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.repository.AttractionRepository;
-import com.ssafy.trip.common.config.S3Config;
 import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
-import com.ssafy.trip.common.exception.custom.NotFoundException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
+import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -53,11 +46,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Long createArticle(String content, Long memberId, Integer attractionId, List<MultipartFile> images) {
         Member member = memberRepository.findById(memberId).orElseThrow(() ->
-                    new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
-                );
+                new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+        );
         Attraction attraction = attractionRepository.findByNo(attractionId).orElseThrow(() ->
-                    new BadRequestException(ErrorCode.ATTRACTION_NOT_FOUND)
-                );
+                new BadRequestException(ErrorCode.ATTRACTION_NOT_FOUND)
+        );
 
         Article article = articleRepository.save(
                 Article.builder()
@@ -88,6 +81,32 @@ public class ArticleServiceImpl implements ArticleService {
 
         return article.getId();
     }
+
+    @Override
+    public List<ArticleResponse> getRecommendedArticles(Integer pageNumber) {
+        List<Tuple> articles = articleRepository.findRecommendArticles(
+                Pagination.PAGE_SIZE.getValue(), Pagination.PAGE_SIZE.calculateOffset(pageNumber)
+        );
+
+        return articles.stream()
+                .map(tuple -> {
+                    Article article = tuple.get(0, Article.class);
+                    Long likeCount = tuple.get(1, Long.class);
+                    List<String> imageUrls = articleImageRepository.findImageUrlsByArticleId(article.getId());
+
+                    return ArticleResponse.builder()
+                            .id(article.getId())
+                            .content(article.getContent())
+                            .createdAt(article.getCreatedAt())
+                            .imageUrls(imageUrls)
+                            .likes(likeCount.intValue())
+                            .memberId(article.getMember().getId())
+                            .memberNickname(article.getMember().getNickname())
+                            .build();
+                })
+                .toList();
+    }
+
 
     private String uploadImage(String nickname, MultipartFile imageFile) {
         File uploadedFile = convert(imageFile);

@@ -1,18 +1,19 @@
 package com.ssafy.trip.article.controller;
 
+import com.ssafy.trip.article.dto.ArticleListResponse;
+import com.ssafy.trip.article.dto.ArticleResponse;
 import com.ssafy.trip.article.dto.CreateArticleRequest;
 import com.ssafy.trip.article.dto.CreatedAtricleResponse;
 import com.ssafy.trip.article.service.ArticleService;
 import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -45,5 +46,16 @@ public class ArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 CreatedAtricleResponse.builder().id(articleId).build()
         );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ArticleResponse>> getRecommendedArticles(
+            @RequestParam(defaultValue = "1") @Min(1) @Valid Integer pageNumber
+    ) {
+        ArticleListResponse responseDto = ArticleListResponse.builder()
+                .articles(articleService.getRecommendedArticles(pageNumber))
+                .build();
+
+        return ResponseEntity.ok(responseDto.getArticles());
     }
 }
