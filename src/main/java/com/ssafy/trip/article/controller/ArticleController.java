@@ -24,6 +24,8 @@ import java.util.List;
 @RequestMapping("/articles")
 public class ArticleController {
     private final ArticleService articleService;
+    private static final int MIN_PAGE = 1;
+    private static final String MIN_PAGE_STR = "1";
 
     @PostMapping
     public ResponseEntity<CreatedAtricleResponse> createArticle(
@@ -50,7 +52,7 @@ public class ArticleController {
 
     @GetMapping
     public ResponseEntity<List<ArticleResponse>> getRecommendedArticles(
-            @RequestParam(defaultValue = "1") @Min(1) @Valid Integer pageNumber
+            @RequestParam(defaultValue = MIN_PAGE_STR) @Min(MIN_PAGE) @Valid Integer pageNumber
     ) {
         ArticleListResponse responseDto = ArticleListResponse.builder()
                 .articles(articleService.getRecommendedArticles(pageNumber))
