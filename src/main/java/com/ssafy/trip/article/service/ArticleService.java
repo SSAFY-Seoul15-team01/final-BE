@@ -8,5 +8,5 @@ import java.util.List;
 public interface ArticleService {
     Long createArticle(String content, Long memberId, Integer attractionId, List<MultipartFile> images);
     List<ArticleResponse> getRecommendedArticles(Integer pageNumber);
-    List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoCode, Long cursorId);
+    List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoId, Long cursorId);
 }

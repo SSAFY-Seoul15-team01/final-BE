@@ -29,15 +29,16 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "JOIN a.member m " +
             "JOIN a.attraction att " +
             "JOIN att.gugun g " +
+            "JOIN g.sido s " +
             "WHERE a.id < :cursorId " +
             "AND m.id = :memberId " +
-            "AND g.sidoCode = :sidoCode " +
+            "AND s.no = :sidoId " +
             "AND a.deletedAt IS NULL " +
             "ORDER BY a.id DESC " +
             "LIMIT :pageSize")
     List<Tuple> findArticlesByMemberAndSido(
             @Param("memberId") Long memberId,
-            @Param("sidoCode") Integer sidoCode,
+            @Param("sidoId") Integer sidoId,
             @Param("cursorId") Long cursorId,
             @Param("pageSize") int pageSize
     );

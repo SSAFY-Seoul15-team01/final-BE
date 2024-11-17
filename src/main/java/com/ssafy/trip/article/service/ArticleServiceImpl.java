@@ -109,8 +109,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoCode, Long cursorId) {
-        List<Tuple> articles = articleRepository.findArticlesByMemberAndSido(memberId, sidoCode, cursorId, Pagination.PAGE_SIZE.getValue());
+    public List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoId, Long cursorId) {
+        List<Tuple> articles = articleRepository.findArticlesByMemberAndSido(memberId, sidoId, cursorId, Pagination.PAGE_SIZE.getValue());
 
         return articles.stream()
                 .map(tuple -> {

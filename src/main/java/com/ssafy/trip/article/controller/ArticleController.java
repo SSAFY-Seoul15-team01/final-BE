@@ -27,10 +27,10 @@ public class ArticleController {
     private static final long MAX_CURSOR_ID = Long.MAX_VALUE;
     private static final String MAX_CURSOR_ID_STR = "" + MAX_CURSOR_ID;
 
-    @GetMapping("/members/{memberId}/sidos/{sidoCode}")
+    @GetMapping("/members/{memberId}/sidos/{sidoId}")
     public ResponseEntity<ArticleListWithLastIdResponse> getMemberCharacterArticle(
             @PathVariable Long memberId,
-            @PathVariable Integer sidoCode,
+            @PathVariable Integer sidoId,
             @RequestParam(defaultValue = MAX_CURSOR_ID_STR) @Min(MAX_CURSOR_ID) Long cursorId,
             HttpSession httpSession
     ) {
@@ -40,7 +40,7 @@ public class ArticleController {
             throw new BadRequestException(ErrorCode.MEMBER_NOT_MATCH);
         }
 
-        List<ArticleResponse> articles = articleService.getArticlesOfMemberCharacter(memberId, sidoCode, cursorId);
+        List<ArticleResponse> articles = articleService.getArticlesOfMemberCharacter(memberId, sidoId, cursorId);
 
         ArticleListWithLastIdResponse responseDto = ArticleListWithLastIdResponse.builder()
                 .articles(articles)
