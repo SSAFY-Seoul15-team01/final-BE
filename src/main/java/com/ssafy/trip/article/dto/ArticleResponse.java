@@ -13,7 +13,7 @@ public class ArticleResponse {
     private String content;
     private LocalDateTime createdAt;
     private List<String> imageUrls;
-    private Integer likes;
+    private Long likes;
     private Long memberId;
     private String memberNickname;
 }
