@@ -8,4 +8,6 @@ import java.util.List;
 public interface ArticleService {
     Long createArticle(String content, Long memberId, Integer attractionId, List<MultipartFile> images);
     List<ArticleResponse> getRecommendedArticles(Integer pageNumber);
+    Long addLike(Long articleId, Long memberId);
+    Long removeLike(Long articleId, Long memberId);
 }

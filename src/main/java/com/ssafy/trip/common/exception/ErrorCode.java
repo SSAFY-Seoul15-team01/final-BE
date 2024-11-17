@@ -18,8 +18,12 @@ public enum ErrorCode {
 
     MEMBER_NOT_MATCH(HttpStatus.BAD_REQUEST, "Request member does not match the session info"),
 
+    INVALID_LIKE_ACTION(HttpStatus.BAD_REQUEST, "Like action is invalid"),
+
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member is not found"),
-    ATTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Attraction is not found");
+    ATTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Attraction is not found"),
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND,  "Article is not found");
+
 
     private final HttpStatus status;
     private final String message;

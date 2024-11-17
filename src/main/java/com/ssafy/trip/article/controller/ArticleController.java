@@ -1,9 +1,6 @@
 package com.ssafy.trip.article.controller;
 
-import com.ssafy.trip.article.dto.ArticleListResponse;
-import com.ssafy.trip.article.dto.ArticleResponse;
-import com.ssafy.trip.article.dto.CreateArticleRequest;
-import com.ssafy.trip.article.dto.CreatedAtricleResponse;
+import com.ssafy.trip.article.dto.*;
 import com.ssafy.trip.article.service.ArticleService;
 import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
@@ -60,4 +57,25 @@ public class ArticleController {
 
         return ResponseEntity.ok(responseDto.getArticles());
     }
+
+    @PostMapping("/{articleId}/likes")
+    public ResponseEntity<LikeResponse> addLike(HttpSession httpSession, @PathVariable Long articleId) {
+        HashMap<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
+        Long memberId = (Long) userInfo.get("id");
+        LikeResponse likeResponse = LikeResponse.builder()
+                .likeCount(articleService.addLike(memberId, articleId)).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(likeResponse);
+    }
+
+    @DeleteMapping("{articleId}/likes")
+    public ResponseEntity<LikeResponse> deleteLike(HttpSession httpSession, @PathVariable Long articleId) {
+        HashMap<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
+        Long memberId = (Long) userInfo.get("id");
+        LikeResponse likeResponse = LikeResponse.builder()
+                .likeCount(articleService.removeLike(memberId, articleId)).build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(likeResponse);
+    }
+
 }
