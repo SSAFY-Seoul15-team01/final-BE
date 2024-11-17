@@ -41,8 +41,8 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() ->
                 new NotFoundException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (nickname != null) {
-            if (!member.getNickname().equals(nickname) && memberRepository.existsByNickname(nickname)) {
+        if (nickname != null && !member.getNickname().equals(nickname)) {
+            if (memberRepository.existsByNickname(nickname)) {
                 throw new ConflictException(ErrorCode.NICKNAME_ALREADY_EXIST);
             }
             member.updateNickname(nickname);
