@@ -9,4 +9,6 @@ public interface ArticleService {
     Long createArticle(String content, Long memberId, Integer attractionId, List<MultipartFile> images);
     List<ArticleResponse> getRecommendedArticles(Integer pageNumber);
     List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoId, Long cursorId);
+    Long addLike(Long articleId, Long memberId);
+    Long removeLike(Long articleId, Long memberId);
 }

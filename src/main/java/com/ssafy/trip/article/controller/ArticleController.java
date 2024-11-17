@@ -83,4 +83,25 @@ public class ArticleController {
 
         return ResponseEntity.ok(responseDto);
     }
+
+    @PostMapping("/{articleId}/likes")
+    public ResponseEntity<LikeResponse> addLike(HttpSession httpSession, @PathVariable Long articleId) {
+        HashMap<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
+        Long memberId = (Long) userInfo.get("id");
+        LikeResponse likeResponse = LikeResponse.builder()
+                .likeCount(articleService.addLike(memberId, articleId)).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(likeResponse);
+    }
+
+    @DeleteMapping("{articleId}/likes")
+    public ResponseEntity<LikeResponse> deleteLike(HttpSession httpSession, @PathVariable Long articleId) {
+        HashMap<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
+        Long memberId = (Long) userInfo.get("id");
+        LikeResponse likeResponse = LikeResponse.builder()
+                .likeCount(articleService.removeLike(memberId, articleId)).build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(likeResponse);
+    }
+
 }

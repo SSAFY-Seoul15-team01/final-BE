@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.trip.article.domain.Article;
 import com.ssafy.trip.article.domain.ArticleImage;
+import com.ssafy.trip.article.domain.Like;
 import com.ssafy.trip.article.dto.ArticleResponse;
 import com.ssafy.trip.article.repository.ArticleImageRepository;
 import com.ssafy.trip.article.repository.ArticleRepository;
+import com.ssafy.trip.article.repository.LikeRepository;
 import com.ssafy.trip.article.util.Pagination;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.repository.AttractionRepository;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,6 +41,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleImageRepository articleImageRepository;
     private final MemberRepository memberRepository;
     private final AttractionRepository attractionRepository;
+    private final LikeRepository likeRepository;
 
     private final AmazonS3 s3Client;
 
@@ -128,6 +132,43 @@ public class ArticleServiceImpl implements ArticleService {
                             .build();
                 })
                 .toList();
+    }
+
+    @Override
+    public Long addLike(Long articleId, Long memberId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.ARTICLE_NOT_FOUND)
+        );
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        if (likeRepository.existsByMemberAndArticle(member, article)) {
+            throw new BadRequestException(ErrorCode.INVALID_LIKE_ACTION);
+        }
+
+        likeRepository.save(Like.builder()
+                .article(article)
+                .member(member)
+                .build());
+
+        return likeRepository.countByArticle(article);
+    }
+
+    @Override
+    public Long removeLike(Long articleId, Long memberId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.ARTICLE_NOT_FOUND)
+        );
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        Like like = likeRepository.findByMemberAndArticle(member, article).orElseThrow(() ->
+                new BadRequestException(ErrorCode.INVALID_LIKE_ACTION));
+        likeRepository.delete(like);
+
+        return likeRepository.countByArticle(article);
     }
 
     private String uploadImage(String nickname, MultipartFile imageFile) {
