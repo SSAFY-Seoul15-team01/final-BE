@@ -50,6 +50,21 @@ public class ArticleController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping("/attractions/{attractionId}")
+    public ResponseEntity<ArticleListWithLastIdResponse> getAttractionArticle(
+            @PathVariable Integer attractionId,
+            @RequestParam(defaultValue = MAX_CURSOR_ID_STR) @Min(MAX_CURSOR_ID) Long cursorId
+    ) {
+        List<ArticleResponse> articles = articleService.getAtriclesOfAttraction(attractionId, cursorId);
+
+        ArticleListWithLastIdResponse responseDto = ArticleListWithLastIdResponse.builder()
+                .articles(articles)
+                .lastId(articles.get(articles.size() - 1).getId())
+                .build();
+
+        return ResponseEntity.ok(responseDto);
+    }
+
     @PostMapping
     public ResponseEntity<CreatedAtricleResponse> createArticle(
             @RequestPart List<MultipartFile> images,
