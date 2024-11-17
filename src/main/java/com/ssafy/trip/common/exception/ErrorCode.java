@@ -19,7 +19,9 @@ public enum ErrorCode {
     MEMBER_NOT_MATCH(HttpStatus.BAD_REQUEST, "Request member does not match the session info"),
 
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member is not found"),
-    ATTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Attraction is not found");
+    ATTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Attraction is not found"),
+
+    NICKNAME_ALREADY_EXIST(HttpStatus.CONFLICT, "Nickname already exist"),;
 
     private final HttpStatus status;
     private final String message;
