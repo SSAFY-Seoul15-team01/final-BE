@@ -4,13 +4,11 @@ import com.ssafy.trip.common.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "members")
 public class Member extends BaseTimeEntity {
@@ -35,11 +33,21 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Member(String nickname, String profileUrl, String socialId, String socialType, LocalDateTime deletedAt) {
+    public Member(Long id, String nickname, String profileUrl, String socialId, String socialType, LocalDateTime deletedAt) {
+        this.id = id;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
         this.socialId = socialId;
         this.socialType = socialType;
         this.deletedAt = deletedAt;
     }
+
+    public void updateProfileUrl(String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
 }
