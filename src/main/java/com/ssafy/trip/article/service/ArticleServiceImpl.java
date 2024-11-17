@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.trip.article.domain.Article;
 import com.ssafy.trip.article.domain.ArticleImage;
+import com.ssafy.trip.article.domain.Like;
 import com.ssafy.trip.article.dto.ArticleResponse;
 import com.ssafy.trip.article.repository.ArticleImageRepository;
 import com.ssafy.trip.article.repository.ArticleRepository;
+import com.ssafy.trip.article.repository.LikeRepository;
 import com.ssafy.trip.article.util.Pagination;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.repository.AttractionRepository;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +40,7 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleImageRepository articleImageRepository;
     private final MemberRepository memberRepository;
     private final AttractionRepository attractionRepository;
+    private final LikeRepository likeRepository;
 
     private final AmazonS3 s3Client;
 
@@ -99,7 +103,7 @@ public class ArticleServiceImpl implements ArticleService {
                             .content(article.getContent())
                             .createdAt(article.getCreatedAt())
                             .imageUrls(imageUrls)
-                            .likes(likeCount.intValue())
+                            .likes(likeCount)
                             .memberId(article.getMember().getId())
                             .memberNickname(article.getMember().getNickname())
                             .build();
@@ -107,6 +111,60 @@ public class ArticleServiceImpl implements ArticleService {
                 .toList();
     }
 
+    @Override
+    public List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoId, Long cursorId) {
+        List<Tuple> articles = articleRepository.findArticlesByMemberAndSido(
+                memberId, sidoId, cursorId, Pagination.PAGE_SIZE.getValue()
+        );
+
+        return getArticleResponses(articles);
+    }
+
+    @Override
+    public List<ArticleResponse> getAtriclesOfAttraction(Integer attractionId, Long cursorId) {
+        List<Tuple> articles = articleRepository.findArticlesByAttraction(
+                attractionId, cursorId, Pagination.PAGE_SIZE.getValue()
+        );
+
+        return getArticleResponses(articles);
+    }
+
+    @Override
+    public Long addLike(Long articleId, Long memberId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.ARTICLE_NOT_FOUND)
+        );
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        if (likeRepository.existsByMemberAndArticle(member, article)) {
+            throw new BadRequestException(ErrorCode.INVALID_LIKE_ACTION);
+        }
+
+        likeRepository.save(Like.builder()
+                .article(article)
+                .member(member)
+                .build());
+
+        return likeRepository.countByArticle(article);
+    }
+
+    @Override
+    public Long removeLike(Long articleId, Long memberId) {
+        Article article = articleRepository.findById(articleId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.ARTICLE_NOT_FOUND)
+        );
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        Like like = likeRepository.findByMemberAndArticle(member, article).orElseThrow(() ->
+                new BadRequestException(ErrorCode.INVALID_LIKE_ACTION));
+        likeRepository.delete(like);
+
+        return likeRepository.countByArticle(article);
+    }
 
     private String uploadImage(String nickname, MultipartFile imageFile) {
         File uploadedFile = convert(imageFile);
@@ -142,5 +200,24 @@ public class ArticleServiceImpl implements ArticleService {
             throw new BadRequestException(ErrorCode.IMAGE_READ_ERROR);
         }
         return convertFile;
+    }
+
+    private List<ArticleResponse> getArticleResponses(List<Tuple> articles) {
+        return articles.stream()
+                .map(tuple -> {
+                    Long articleId = tuple.get("articleId", Long.class);
+                    List<String> imageUrls = articleImageRepository.findImageUrlsByArticleId(articleId);
+
+                    return ArticleResponse.builder()
+                            .id(articleId)
+                            .content(tuple.get("articleContent", String.class))
+                            .createdAt(tuple.get("articleCreatedAt", LocalDateTime.class))
+                            .imageUrls(imageUrls)
+                            .likes(tuple.get("likes", Long.class))
+                            .memberId(tuple.get("memberId", Long.class))
+                            .memberNickname(tuple.get("memberNickname", String.class))
+                            .build();
+                })
+                .toList();
     }
 }
