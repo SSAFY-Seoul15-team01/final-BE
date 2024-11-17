@@ -120,6 +120,10 @@ public class ArticleServiceImpl implements ArticleService {
                 new BadRequestException(ErrorCode.MEMBER_NOT_FOUND)
         );
 
+        if (likeRepository.existsByMemberAndArticle(member, article)) {
+            throw new BadRequestException(ErrorCode.INVALID_LIKE_ACTION);
+        }
+
         likeRepository.save(Like.builder()
                 .article(article)
                 .member(member)
