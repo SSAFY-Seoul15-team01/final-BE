@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -99,7 +100,7 @@ public class ArticleServiceImpl implements ArticleService {
                             .content(article.getContent())
                             .createdAt(article.getCreatedAt())
                             .imageUrls(imageUrls)
-                            .likes(likeCount.intValue())
+                            .likes(likeCount)
                             .memberId(article.getMember().getId())
                             .memberNickname(article.getMember().getNickname())
                             .build();
@@ -107,6 +108,27 @@ public class ArticleServiceImpl implements ArticleService {
                 .toList();
     }
 
+    @Override
+    public List<ArticleResponse> getArticlesOfMemberCharacter(Long memberId, Integer sidoCode, Long cursorId) {
+        List<Tuple> articles = articleRepository.findArticlesByMemberAndSido(memberId, sidoCode, cursorId, Pagination.PAGE_SIZE.getValue());
+
+        return articles.stream()
+                .map(tuple -> {
+                    Long articleId = tuple.get("articleId", Long.class);
+                    List<String> imageUrls = articleImageRepository.findImageUrlsByArticleId(articleId);
+
+                    return ArticleResponse.builder()
+                            .id(articleId)
+                            .content(tuple.get("articleContent", String.class))
+                            .createdAt(tuple.get("articleCreatedAt", LocalDateTime.class))
+                            .imageUrls(imageUrls)
+                            .likes(tuple.get("likes", Long.class))
+                            .memberId(tuple.get("memberId", Long.class))
+                            .memberNickname(tuple.get("memberNickname", String.class))
+                            .build();
+                })
+                .toList();
+    }
 
     private String uploadImage(String nickname, MultipartFile imageFile) {
         File uploadedFile = convert(imageFile);
