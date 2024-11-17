@@ -18,4 +18,27 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             "ORDER BY likes DESC " +
             "LIMIT :pageSize OFFSET :offset")
     List<Tuple> findRecommendArticles(@Param("pageSize") int pageSize, @Param("offset") int offset);
+
+    @Query("SELECT a.id articleId, " +
+            "a.content articleContent, " +
+            "a.createdAt articleCreatedAt, " +
+            "(SELECT COUNT(l) FROM Like l WHERE l.article = a) likes, " +
+            "m.id memberId, " +
+            "m.nickname memberNickname " +
+            "FROM Article a " +
+            "JOIN a.member m " +
+            "JOIN a.attraction att " +
+            "JOIN att.gugun g " +
+            "WHERE a.id < :cursorId " +
+            "AND m.id = :memberId " +
+            "AND g.sidoCode = :sidoCode " +
+            "AND a.deletedAt IS NULL " +
+            "ORDER BY a.id DESC " +
+            "LIMIT :pageSize")
+    List<Tuple> findArticlesByMemberAndSido(
+            @Param("memberId") Long memberId,
+            @Param("sidoCode") Integer sidoCode,
+            @Param("cursorId") Long cursorId,
+            @Param("pageSize") int pageSize
+    );
 }
