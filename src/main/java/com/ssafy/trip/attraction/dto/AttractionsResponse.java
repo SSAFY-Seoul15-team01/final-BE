@@ -9,7 +9,7 @@ import java.util.List;
 @ToString
 @Getter
 @Builder
-public class AttractionsByKeywordResponse {
+public class AttractionsResponse {
     private List<AttractionResponse> attractions;
     private Integer lastId;
 }

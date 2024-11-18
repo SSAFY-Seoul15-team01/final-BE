@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -17,5 +18,10 @@ public class AttractionServiceImpl implements AttractionService {
     @Override
     public List<Attraction> findAttractionsByKeyword(String keyword, int cursorId) {
         return attractionMapper.selectAttractionsByKeyword(keyword, cursorId);
+    }
+
+    @Override
+    public List<Attraction> findAttractionsByDistance(BigDecimal latitude, BigDecimal longitude, int cursorId) {
+        return attractionMapper.selectAttractionsByDistance(latitude, longitude, cursorId);
     }
 }
