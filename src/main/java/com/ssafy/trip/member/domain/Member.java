@@ -33,13 +33,12 @@ public class Member extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Member(Long id, String nickname, String profileUrl, String socialId, String socialType, LocalDateTime deletedAt) {
+    public Member(Long id, String nickname, String profileUrl, String socialId, String socialType) {
         this.id = id;
         this.nickname = nickname;
         this.profileUrl = profileUrl;
         this.socialId = socialId;
         this.socialType = socialType;
-        this.deletedAt = deletedAt;
     }
 
     public void updateProfileUrl(String profileUrl) {

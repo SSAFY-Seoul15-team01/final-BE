@@ -32,14 +32,14 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> modifyMember(
-            @RequestPart(value = "imageFile", required = false) MultipartFile imageFile,
-            @RequestPart(value = "nickname", required = false) String nickname,
+    public ResponseEntity<MemberResponse> modifyMember(
+            @RequestPart(required = false) MultipartFile imageFile,
+            @RequestPart(required = false) String nickname,
             HttpSession httpSession) {
         Map<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
         Long id = (Long) userInfo.get("id");
         memberService.modifyMember(id, imageFile, nickname);
 
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(this.findById(id).getBody());
     }
 }

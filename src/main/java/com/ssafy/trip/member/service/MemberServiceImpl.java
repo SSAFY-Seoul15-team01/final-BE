@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
-import com.ssafy.trip.common.exception.custom.ConflictException;
+import com.ssafy.trip.common.exception.custom.NicknameConflictException;
 import com.ssafy.trip.common.exception.custom.NotFoundException;
 import com.ssafy.trip.member.domain.Member;
 import com.ssafy.trip.member.repository.MemberRepository;
@@ -43,13 +43,13 @@ public class MemberServiceImpl implements MemberService {
 
         if (nickname != null && !member.getNickname().equals(nickname)) {
             if (memberRepository.existsByNickname(nickname)) {
-                throw new ConflictException(ErrorCode.NICKNAME_ALREADY_EXIST);
+                throw new NicknameConflictException(ErrorCode.NICKNAME_ALREADY_EXIST);
             }
             member.updateNickname(nickname);
         }
 
-        nickname = member.getNickname();
         if (imageFile != null) {
+            nickname = member.getNickname();
             member.updateProfileUrl(uploadImage(nickname, imageFile));
         }
     }
