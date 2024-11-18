@@ -19,8 +19,10 @@ import java.util.Map;
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/{memberId}")
-    public ResponseEntity<MemberResponse> findById(@PathVariable("memberId") Long id) {
+    @GetMapping
+    public ResponseEntity<MemberResponse> findById(HttpSession httpSession) {
+        Map<String, Object> userInfo = (HashMap<String, Object>) httpSession.getAttribute("userInfo");
+        Long id = (Long) userInfo.get("id");
         Member member = memberService.findById(id);
         MemberResponse memberResponse = MemberResponse.builder()
                 .id(member.getId())
@@ -32,7 +34,7 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<MemberResponse> modifyMember(
+    public ResponseEntity<Void> modifyMember(
             @RequestPart(required = false) MultipartFile imageFile,
             @RequestPart(required = false) String nickname,
             HttpSession httpSession) {
@@ -40,6 +42,6 @@ public class MemberController {
         Long id = (Long) userInfo.get("id");
         memberService.modifyMember(id, imageFile, nickname);
 
-        return ResponseEntity.status(HttpStatus.OK).body(this.findById(id).getBody());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
