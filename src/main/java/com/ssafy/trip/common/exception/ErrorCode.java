@@ -22,8 +22,9 @@ public enum ErrorCode {
 
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "Member is not found"),
     ATTRACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Attraction is not found"),
-    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND,  "Article is not found");
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND,  "Article is not found"),
 
+    NICKNAME_ALREADY_EXIST(HttpStatus.CONFLICT, "Nickname already exist");
 
     private final HttpStatus status;
     private final String message;
