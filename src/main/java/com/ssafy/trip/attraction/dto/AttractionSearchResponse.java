@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @ToString
 @Getter
 @Builder
-public class AttractionResponse {
+public class AttractionSearchResponse {
     private Integer attraction_id;
     private String title;
     private String first_image1;

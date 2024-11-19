@@ -1,10 +1,9 @@
 package com.ssafy.trip.attraction.controller;
 
 import com.ssafy.trip.attraction.domain.Attraction;
-import com.ssafy.trip.attraction.dto.AttractionResponse;
-import com.ssafy.trip.attraction.dto.AttractionsResponse;
-import com.ssafy.trip.attraction.dto.LocationRequest;
+import com.ssafy.trip.attraction.dto.*;
 import com.ssafy.trip.attraction.service.AttractionService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,14 +23,14 @@ public class AttractionController {
     private static final String DEFAULT_CURSOR_ID = "0";
 
     @GetMapping("/search")
-    public ResponseEntity<AttractionsResponse> findAttractionsByKeyword(
+    public ResponseEntity<AttractionSearchPagingResponse> findAttractionsByKeyword(
             @RequestParam @NotBlank String keyword,
             @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
     ) {
         List<Attraction> attractions = attractionService.findAttractionsByKeyword(keyword, cursorId);
 
-        List<AttractionResponse> attractionDtoList = attractions.stream()
-                .map(attraction -> AttractionResponse.builder()
+        List<AttractionSearchResponse> attractionDtoList = attractions.stream()
+                .map(attraction -> AttractionSearchResponse.builder()
                         .attraction_id(attraction.getNo())
                         .title(attraction.getTitle())
                         .first_image1(attraction.getFirstImage1())
@@ -43,7 +42,7 @@ public class AttractionController {
                 )
                 .collect(Collectors.toList());
 
-        AttractionsResponse responseDto = AttractionsResponse.builder()
+        AttractionSearchPagingResponse responseDto = AttractionSearchPagingResponse.builder()
                 .attractions(attractionDtoList)
                 .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttraction_id())
                 .build();
@@ -54,28 +53,15 @@ public class AttractionController {
     @GetMapping
     public ResponseEntity<?> findAttractionsByDistance(
             @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId,
-            @RequestBody LocationRequest locationRequest
+            @Valid @RequestBody LocationRequest locationRequest
             ) {
         BigDecimal latitude = locationRequest.getLatitude();
         BigDecimal longitude = locationRequest.getLongitude();
-        List<Attraction> attractions = attractionService.findAttractionsByDistance(latitude, longitude, cursorId);
+        List<AttractionNearByResponse> attractions = attractionService.findAttractionsByDistance(latitude, longitude, cursorId);
 
-        List<AttractionResponse> attractionDtoList = attractions.stream()
-                .map(attraction -> AttractionResponse.builder()
-                        .attraction_id(attraction.getNo())
-                        .title(attraction.getTitle())
-                        .first_image1(attraction.getFirstImage1())
-                        .first_image2(attraction.getFirstImage2())
-                        .latitude(attraction.getLatitude())
-                        .longitude((attraction.getLongitude()))
-                        .address(attraction.getAddr1())
-                        .build()
-                )
-                .collect(Collectors.toList());
-
-        AttractionsResponse responseDto = AttractionsResponse.builder()
-                .attractions(attractionDtoList)
-                .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttraction_id())
+        AttractionNearByPagingResponse responseDto = AttractionNearByPagingResponse.builder()
+                .attractions(attractions)
+                .lastId(attractions.get(attractions.size()-1).getNo())
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);

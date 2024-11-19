@@ -1,6 +1,7 @@
 package com.ssafy.trip.attraction.service;
 
 import com.ssafy.trip.attraction.domain.Attraction;
+import com.ssafy.trip.attraction.dto.AttractionNearByResponse;
 import com.ssafy.trip.attraction.repository.AttractionMapper;
 import com.ssafy.trip.common.exception.ErrorCode;
 import com.ssafy.trip.common.exception.custom.BadRequestException;
@@ -23,10 +24,7 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public List<Attraction> findAttractionsByDistance(BigDecimal latitude, BigDecimal longitude, int cursorId) {
-        if (latitude == null || longitude == null) {
-            throw new BadRequestException(ErrorCode.INVALID_LOCATION);
-        }
+    public List<AttractionNearByResponse> findAttractionsByDistance(BigDecimal latitude, BigDecimal longitude, int cursorId) {
         return attractionMapper.selectAttractionsByDistance(latitude, longitude, cursorId);
     }
 }
