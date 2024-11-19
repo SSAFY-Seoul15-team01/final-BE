@@ -24,10 +24,19 @@ public class AttractionController {
 
     @GetMapping("/search")
     public ResponseEntity<AttractionSearchPagingResponse> findAttractionsByKeyword(
-            @RequestParam @NotBlank String keyword,
-            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
+            @ModelAttribute AttractionSearchRequest searchRequest
     ) {
-        List<Attraction> attractions = attractionService.findAttractionsByKeyword(keyword, cursorId);
+        List<Attraction> attractions = attractionService.findAttractionsByKeyword(
+                searchRequest.getKeyword(),
+                searchRequest.getCursorId(),
+                searchRequest.getSpot(),
+                searchRequest.getFacility(),
+                searchRequest.getFestival(),
+                searchRequest.getLeports(),
+                searchRequest.getStay(),
+                searchRequest.getShopping(),
+                searchRequest.getRestaurant()
+        );
 
         List<AttractionSearchResponse> attractionDtoList = attractions.stream()
                 .map(attraction -> AttractionSearchResponse.builder()

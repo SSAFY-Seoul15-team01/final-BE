@@ -8,6 +8,12 @@
         from attractions
         where (title like concat('%',#{keyword},'%')
             or addr1 like concat('%',#{keyword},'%'))
+            and (
+                content_type_id in
+                <foreach item="item" collection="contentTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                )
             and no > #{cursorId}
         limit 5
     </select>

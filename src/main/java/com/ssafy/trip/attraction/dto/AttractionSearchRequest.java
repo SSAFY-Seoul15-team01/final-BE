@@ -1,11 +1,13 @@
 package com.ssafy.trip.attraction.dto;
 
 import com.drew.lang.annotations.NotNull;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @ToString
 @Getter
+@Builder
 public class AttractionSearchRequest {
     private static final Integer DEFAULT_CURSOR_ID = 0;
 
