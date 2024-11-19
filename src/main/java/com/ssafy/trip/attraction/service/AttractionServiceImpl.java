@@ -4,8 +4,6 @@ import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.dto.AttractionNearByResponse;
 import com.ssafy.trip.attraction.repository.AttractionMapper;
 import com.ssafy.trip.attraction.util.ContentType;
-import com.ssafy.trip.common.exception.ErrorCode;
-import com.ssafy.trip.common.exception.custom.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

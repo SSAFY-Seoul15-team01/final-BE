@@ -1,6 +1,5 @@
 package com.ssafy.trip.attraction.service;
 
-import com.drew.lang.annotations.NotNull;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.dto.AttractionNearByResponse;
 
@@ -19,5 +18,6 @@ public interface AttractionService {
             Boolean shopping,
             Boolean restaurant
     );
+
     List<AttractionNearByResponse> findAttractionsByDistance(BigDecimal latitude, BigDecimal longitude, int cursorId);
 }

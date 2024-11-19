@@ -1,6 +1,6 @@
 package com.ssafy.trip.attraction.dto;
 
-import com.drew.lang.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
