@@ -1,11 +1,15 @@
 package com.ssafy.trip.attraction.service;
 
 import com.ssafy.trip.attraction.domain.Attraction;
+import com.ssafy.trip.attraction.dto.AttractionNearByResponse;
 import com.ssafy.trip.attraction.repository.AttractionMapper;
+import com.ssafy.trip.common.exception.ErrorCode;
+import com.ssafy.trip.common.exception.custom.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -17,5 +21,10 @@ public class AttractionServiceImpl implements AttractionService {
     @Override
     public List<Attraction> findAttractionsByKeyword(String keyword, int cursorId) {
         return attractionMapper.selectAttractionsByKeyword(keyword, cursorId);
+    }
+
+    @Override
+    public List<AttractionNearByResponse> findAttractionsByDistance(BigDecimal latitude, BigDecimal longitude, int cursorId) {
+        return attractionMapper.selectAttractionsByDistance(latitude, longitude, cursorId);
     }
 }

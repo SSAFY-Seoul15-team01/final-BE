@@ -1,17 +1,16 @@
 package com.ssafy.trip.attraction.controller;
 
 import com.ssafy.trip.attraction.domain.Attraction;
-import com.ssafy.trip.attraction.dto.AttractionResponse;
-import com.ssafy.trip.attraction.dto.AttractionsByKeywordResponse;
+import com.ssafy.trip.attraction.dto.*;
 import com.ssafy.trip.attraction.service.AttractionService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,14 +23,14 @@ public class AttractionController {
     private static final String DEFAULT_CURSOR_ID = "0";
 
     @GetMapping("/search")
-    public ResponseEntity<AttractionsByKeywordResponse> findAttractionsByKeyword(
+    public ResponseEntity<AttractionSearchPagingResponse> findAttractionsByKeyword(
             @RequestParam @NotBlank String keyword,
             @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
     ) {
         List<Attraction> attractions = attractionService.findAttractionsByKeyword(keyword, cursorId);
 
-        List<AttractionResponse> attractionDtoList = attractions.stream()
-                .map(attraction -> AttractionResponse.builder()
+        List<AttractionSearchResponse> attractionDtoList = attractions.stream()
+                .map(attraction -> AttractionSearchResponse.builder()
                         .attraction_id(attraction.getNo())
                         .title(attraction.getTitle())
                         .first_image1(attraction.getFirstImage1())
@@ -43,11 +42,29 @@ public class AttractionController {
                 )
                 .collect(Collectors.toList());
 
-        AttractionsByKeywordResponse responseDto = AttractionsByKeywordResponse.builder()
+        AttractionSearchPagingResponse responseDto = AttractionSearchPagingResponse.builder()
                 .attractions(attractionDtoList)
                 .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttraction_id())
                 .build();
 
         return ResponseEntity.ok(responseDto);
     }
+
+    @GetMapping
+    public ResponseEntity<AttractionNearByPagingResponse> findAttractionsByDistance(
+            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId,
+            @Valid @RequestBody LocationRequest locationRequest
+            ) {
+        BigDecimal latitude = locationRequest.getLatitude();
+        BigDecimal longitude = locationRequest.getLongitude();
+        List<AttractionNearByResponse> attractions = attractionService.findAttractionsByDistance(latitude, longitude, cursorId);
+
+        AttractionNearByPagingResponse responseDto = AttractionNearByPagingResponse.builder()
+                .attractions(attractions)
+                .lastId(attractions.get(attractions.size()-1).getRow())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
 }

@@ -6,10 +6,10 @@ import lombok.ToString;
 
 import java.util.List;
 
-@ToString
 @Getter
+@ToString
 @Builder
-public class AttractionsByKeywordResponse {
-    private List<AttractionResponse> attractions;
+public class AttractionNearByPagingResponse {
+    private List<AttractionNearByResponse> attractions;
     private Integer lastId;
 }
