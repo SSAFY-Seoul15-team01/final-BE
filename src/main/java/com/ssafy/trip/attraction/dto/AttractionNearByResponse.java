@@ -12,5 +12,6 @@ import java.math.BigDecimal;
 public class AttractionNearByResponse {
     private Integer no;
     private String title;
+    private Integer row;
     private BigDecimal distance;
 }

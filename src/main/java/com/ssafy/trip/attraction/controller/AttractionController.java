@@ -51,7 +51,7 @@ public class AttractionController {
     }
 
     @GetMapping
-    public ResponseEntity<?> findAttractionsByDistance(
+    public ResponseEntity<AttractionNearByPagingResponse> findAttractionsByDistance(
             @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId,
             @Valid @RequestBody LocationRequest locationRequest
             ) {
@@ -61,7 +61,7 @@ public class AttractionController {
 
         AttractionNearByPagingResponse responseDto = AttractionNearByPagingResponse.builder()
                 .attractions(attractions)
-                .lastId(attractions.get(attractions.size()-1).getNo())
+                .lastId(attractions.get(attractions.size()-1).getRow())
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
