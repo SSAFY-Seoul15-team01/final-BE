@@ -24,17 +24,26 @@ public class AttractionController {
 
     @GetMapping("/search")
     public ResponseEntity<AttractionSearchPagingResponse> findAttractionsByKeyword(
-            @RequestParam @NotBlank String keyword,
-            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
+            @ModelAttribute AttractionSearchRequest searchRequest
     ) {
-        List<Attraction> attractions = attractionService.findAttractionsByKeyword(keyword, cursorId);
+        List<Attraction> attractions = attractionService.findAttractionsByKeyword(
+                searchRequest.getKeyword(),
+                searchRequest.getCursorId(),
+                searchRequest.getSpot(),
+                searchRequest.getFacility(),
+                searchRequest.getFestival(),
+                searchRequest.getLeports(),
+                searchRequest.getStay(),
+                searchRequest.getShopping(),
+                searchRequest.getRestaurant()
+        );
 
         List<AttractionSearchResponse> attractionDtoList = attractions.stream()
                 .map(attraction -> AttractionSearchResponse.builder()
-                        .attraction_id(attraction.getNo())
+                        .attractionId(attraction.getNo())
                         .title(attraction.getTitle())
-                        .first_image1(attraction.getFirstImage1())
-                        .first_image2(attraction.getFirstImage2())
+                        .firstImage1(attraction.getFirstImage1())
+                        .firstImage2(attraction.getFirstImage2())
                         .latitude(attraction.getLatitude())
                         .longitude((attraction.getLongitude()))
                         .address(attraction.getAddr1())
@@ -44,7 +53,7 @@ public class AttractionController {
 
         AttractionSearchPagingResponse responseDto = AttractionSearchPagingResponse.builder()
                 .attractions(attractionDtoList)
-                .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttraction_id())
+                .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttractionId())
                 .build();
 
         return ResponseEntity.ok(responseDto);

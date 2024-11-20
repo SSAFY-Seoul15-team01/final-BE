@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 @Getter
 @Builder
 public class AttractionSearchResponse {
-    private Integer attraction_id;
+    private Integer attractionId;
     private String title;
-    private String first_image1;
-    private String first_image2;
+    private String firstImage1;
+    private String firstImage2;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String address;
