@@ -1,5 +1,6 @@
 package com.ssafy.trip.common.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -9,8 +10,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Configurable
 @Configuration
@@ -21,7 +26,7 @@ public class SecurityConfig {
     private final DefaultOAuth2UserService defaultOAuth2UserService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper objectMapper) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName(null);
         // TODO: 프론트 개발 시 CSRF 함께 관리하여 CSRF 보호 활성화하기
@@ -33,7 +38,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/auth/**", "/", "/attractions/**").permitAll()
                         .anyRequest().authenticated())
-                .logout((logout) ->logout
+                .logout((logout) -> logout
                         .logoutUrl("/auth/logout")
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
@@ -41,7 +46,12 @@ public class SecurityConfig {
                 .oauth2Login((oauth2) -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint.baseUri("/auth/login"))
                         .redirectionEndpoint(endpoint -> endpoint.baseUri("/auth/redirect/*"))
-                        .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService)));
+                        .userInfoEndpoint(endpoint -> endpoint.userService(defaultOAuth2UserService))
+                        .successHandler((request, response, authentication) -> {
+                            String frontendUrl = "http://localhost:5173";
+                            response.sendRedirect(frontendUrl);
+                        })
+                );
 
         return http.build();
     }
