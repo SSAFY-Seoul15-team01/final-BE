@@ -11,7 +11,6 @@ import java.util.List;
 public interface AttractionMapper {
     List<Attraction> selectAttractionsByKeyword(
             String keyword,
-            Integer cursorId,
             List<Integer> contentTypes
     );
     List<AttractionNearByResponse> selectAttractionsByDistance(BigDecimal lat, BigDecimal lng, int cursorId);

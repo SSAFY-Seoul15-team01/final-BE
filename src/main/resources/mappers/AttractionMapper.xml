@@ -14,8 +14,6 @@
                     #{item}
                 </foreach>
                 )
-            and no > #{cursorId}
-        limit 5
     </select>
 
     <select id="selectAttractionsByDistance" resultType="com.ssafy.trip.attraction.dto.AttractionNearByResponse">

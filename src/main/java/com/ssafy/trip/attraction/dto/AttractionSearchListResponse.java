@@ -9,7 +9,6 @@ import java.util.List;
 @ToString
 @Getter
 @Builder
-public class AttractionSearchPagingResponse {
+public class AttractionSearchListResponse {
     private List<AttractionSearchResponse> attractions;
-    private Integer lastId;
 }
