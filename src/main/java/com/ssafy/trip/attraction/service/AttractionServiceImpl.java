@@ -21,7 +21,6 @@ public class AttractionServiceImpl implements AttractionService {
     @Override
     public List<Attraction> findAttractionsByKeyword(
             String keyword,
-            Integer cursorId,
             Boolean spot,
             Boolean facility,
             Boolean festival,
@@ -53,7 +52,7 @@ public class AttractionServiceImpl implements AttractionService {
             contentTypes.add(ContentType.RESTAURANT.getContentTypeId());
         }
 
-        return attractionMapper.selectAttractionsByKeyword(keyword, cursorId, contentTypes);
+        return attractionMapper.selectAttractionsByKeyword(keyword, contentTypes);
     }
 
     @Override

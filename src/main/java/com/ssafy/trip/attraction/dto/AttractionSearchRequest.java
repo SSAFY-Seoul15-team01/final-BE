@@ -9,12 +9,8 @@ import lombok.ToString;
 @Getter
 @Builder
 public class AttractionSearchRequest {
-    private static final Integer DEFAULT_CURSOR_ID = 0;
-
     @NotNull
     private String keyword;
-
-    private Integer cursorId;
 
     @NotNull
     private Boolean spot;
@@ -36,8 +32,4 @@ public class AttractionSearchRequest {
 
     @NotNull
     private Boolean restaurant;
-
-    public Integer getCursorId() {
-        return cursorId != null ? cursorId : DEFAULT_CURSOR_ID;
-    }
 }

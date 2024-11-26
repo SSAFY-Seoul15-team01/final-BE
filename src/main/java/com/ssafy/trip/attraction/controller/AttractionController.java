@@ -3,8 +3,6 @@ package com.ssafy.trip.attraction.controller;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.dto.*;
 import com.ssafy.trip.attraction.service.AttractionService;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +21,11 @@ public class AttractionController {
     private static final String DEFAULT_CURSOR_ID = "0";
 
     @GetMapping("/search")
-    public ResponseEntity<AttractionSearchPagingResponse> findAttractionsByKeyword(
+    public ResponseEntity<AttractionSearchListResponse> findAttractionsByKeyword(
             @ModelAttribute AttractionSearchRequest searchRequest
     ) {
         List<Attraction> attractions = attractionService.findAttractionsByKeyword(
                 searchRequest.getKeyword(),
-                searchRequest.getCursorId(),
                 searchRequest.getSpot(),
                 searchRequest.getFacility(),
                 searchRequest.getFestival(),
@@ -51,9 +48,8 @@ public class AttractionController {
                 )
                 .collect(Collectors.toList());
 
-        AttractionSearchPagingResponse responseDto = AttractionSearchPagingResponse.builder()
+        AttractionSearchListResponse responseDto = AttractionSearchListResponse.builder()
                 .attractions(attractionDtoList)
-                .lastId(attractionDtoList.get(attractionDtoList.size()-1).getAttractionId())
                 .build();
 
         return ResponseEntity.ok(responseDto);
@@ -61,11 +57,10 @@ public class AttractionController {
 
     @GetMapping
     public ResponseEntity<AttractionNearByPagingResponse> findAttractionsByDistance(
-            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId,
-            @Valid @RequestBody LocationRequest locationRequest
-            ) {
-        BigDecimal latitude = locationRequest.getLatitude();
-        BigDecimal longitude = locationRequest.getLongitude();
+            @RequestParam(required = true) BigDecimal latitude,
+            @RequestParam(required = true) BigDecimal longitude,
+            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
+    ) {
         List<AttractionNearByResponse> attractions = attractionService.findAttractionsByDistance(latitude, longitude, cursorId);
 
         AttractionNearByPagingResponse responseDto = AttractionNearByPagingResponse.builder()
