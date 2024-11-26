@@ -6,16 +6,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @Configurable
 @Configuration
@@ -32,11 +29,13 @@ public class SecurityConfig {
         // TODO: 프론트 개발 시 CSRF 함께 관리하여 CSRF 보호 활성화하기
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .requestCache(request -> request
                         .requestCache(requestCache))
                 .authorizeHttpRequests((requests) -> requests
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/auth/**", "/", "/attractions/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/articles").permitAll()
                         .anyRequest().authenticated())
                 .logout((logout) -> logout
                         .logoutUrl("/auth/logout")
