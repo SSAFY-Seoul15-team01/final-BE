@@ -3,7 +3,6 @@ package com.ssafy.trip.attraction.controller;
 import com.ssafy.trip.attraction.domain.Attraction;
 import com.ssafy.trip.attraction.dto.*;
 import com.ssafy.trip.attraction.service.AttractionService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,11 +57,10 @@ public class AttractionController {
 
     @GetMapping
     public ResponseEntity<AttractionNearByPagingResponse> findAttractionsByDistance(
-            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId,
-            @Valid @RequestBody LocationRequest locationRequest
-            ) {
-        BigDecimal latitude = locationRequest.getLatitude();
-        BigDecimal longitude = locationRequest.getLongitude();
+            @RequestParam(required = true) BigDecimal latitude,
+            @RequestParam(required = true) BigDecimal longitude,
+            @RequestParam(defaultValue = DEFAULT_CURSOR_ID) Integer cursorId
+    ) {
         List<AttractionNearByResponse> attractions = attractionService.findAttractionsByDistance(latitude, longitude, cursorId);
 
         AttractionNearByPagingResponse responseDto = AttractionNearByPagingResponse.builder()
